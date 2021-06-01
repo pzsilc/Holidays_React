@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { getUser, getEmployees, postHolidaysRequest } from '../../../requests';
 import CalendarContainer from './Calendar';
-
+import './style.scss';
 
 
 export default class Home extends Component{
@@ -20,12 +20,6 @@ export default class Home extends Component{
         const user = getUser();
         this.setState({ user });
         this.fetchEmployees();
-    }
-
-    componentDidUpdate = () => {
-        if(this.state.suggestHolidays.mode && this.state.suggestHolidays.from && this.state.suggestHolidays.to){
-            //console.log(this.state);
-        }
     }
 
     fetchEmployees = async () => {
@@ -85,21 +79,38 @@ export default class Home extends Component{
         }
     }
 
-    submitSuggestHolidays = async (e) => {
+    resetSuggestHolidaysMode = () => {
+        this.setState({
+            ...this.state,
+            suggestHolidays: {
+                mode: false,
+                from: null,
+                to: null
+            }
+        });
+        document.querySelector('textarea').value = "";
+        document.getElementById('changeModeInput').checked = false;
+    }
+
+    submitSuggestHolidays = async(e) => {
         e.preventDefault();
         const { from, to } = this.state.suggestHolidays;
         const { additionalInfo } = e.target;
-        postHolidaysRequest(from, to, this.state.user, additionalInfo.value);
+        let res = await postHolidaysRequest(from, to, this.state.user, additionalInfo.value);
+        if(res.type === 'success'){
+            this.resetSuggestHolidaysMode();
+        }
     }
 
     render = () => {
+        const w0 = num => num >= 10 ? num : '0' + num;
         const { suggestHolidays } = this.state;
-        var fromDate = suggestHolidays.from ? suggestHolidays.from.getDate() + '.' + suggestHolidays.from.getMonth() + '.' + suggestHolidays.from.getYear() : "";
-        var toDate = suggestHolidays.to ? suggestHolidays.to.getDate() + '.' + suggestHolidays.to.getMonth() + '.' + suggestHolidays.to.getYear() : "";
+        var fromDate = suggestHolidays.from ? w0(suggestHolidays.from.getDate()) + '.' + w0(suggestHolidays.from.getMonth()+1) + '.' + suggestHolidays.from.getFullYear() : "";
+        var toDate = suggestHolidays.to ? w0(suggestHolidays.to.getDate()) + '.' + w0(suggestHolidays.to.getMonth()+1) + '.' + suggestHolidays.to.getFullYear() : "";
         var datesToMark = [];
         if(this.state.suggestHolidays.mode && this.state.suggestHolidays.from && this.state.suggestHolidays.to){
             var days = this.getDaysArray(this.state.suggestHolidays.from, this.state.suggestHolidays.to);
-            datesToMark= days;
+            datesToMark = days;
         }
         const daysNum = datesToMark.length;
         return (
@@ -108,24 +119,26 @@ export default class Home extends Component{
                     pickDate={this.pickDate}
                     datesToMark={datesToMark}
                 />
-                <form onSubmit={this.submitSuggestHolidays}>
-                    <label>
-                        <input type="checkbox" id="changeModeInput" onChange={this.changeMode} />
-                        Zaproponuj urlop
-                    </label>
+                <form onSubmit={this.submitSuggestHolidays} id="add-form">
+                    <input type="checkbox" id="changeModeInput" onChange={this.changeMode} />
+                    <label for="changeModeInput" dangerouslySetInnerHTML={{ __html: this.state.suggestHolidays.mode ? '-' : '+' }}/>
+                    <span class="text-muted h3 ml-4">Zaproponuj urlop</span>
                     {this.state.suggestHolidays.mode &&
                         <div>
-                            Od: <b>{fromDate}</b>
+                            <hr/>
+                            <b>Od:</b>{fromDate}
                             <br/>
-                            Do: <b>{toDate}</b>
-                            <button onClick={this.clearMarkedHolidays} type="button" className="btn btn-danger">Wyczyść</button>
-                            {daysNum &&
-                                <small>Wybrano {daysNum} dni</small>
-                            }
+                            <b>Do:</b>{toDate}
+                            <div className="d-flex justify-content-between my-2">
+                                {daysNum !== 0 &&
+                                    <small className="text-muted mt-2">Wybrano {daysNum} dni</small>
+                                }
+                                <button onClick={this.clearMarkedHolidays} type="button" className="btn btn-danger rounded-0"><i className="fa fa-eraser"></i></button>
+                            </div>
+                            <textarea className="form-control" placeholder="Dodatkowe informacje" name="additionalInfo"></textarea>
+                            <button type="submit" className="btn btn-primary" disabled={!(this.state.suggestHolidays.from && this.state.suggestHolidays.to)}>Wyślij</button>
                         </div>
                     }
-                    <textarea className="form-control" placeholder="Dodatkowe informacje" name="additionalInfo"></textarea>
-                    <button type="submit" className="btn btn-primary" disabled={!(this.state.suggestHolidays.from && this.state.suggestHolidays.to)}>Wyślij</button>
                 </form>
             </div>
         )

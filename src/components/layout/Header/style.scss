@@ -1,0 +1,46 @@
+@import '../../../sass/variables.scss';
+
+header{
+    position: fixed;
+    width: 100%;
+}
+
+.navbar{
+    background-color: $color;
+    color: $color2;
+    font-weight: bold;
+    font-size: 20px;
+
+    .navbar-brand{
+        font-family: $font;
+        letter-spacing: 1px;
+        font-size: 25px;
+    }
+
+    a{
+        color: $color2;
+        text-transform: uppercase;
+    }
+
+    .user{
+        font-family: $font;
+        font-size: 15px;
+        padding-left: 20px;
+        margin-left: 10px;
+        padding-top: 3px;
+        margin-top: 10px;
+        height: 30px;
+        border-left: solid 2px $color2;
+
+        @media(max-width: 992px){
+            border: none;
+            margin-left: 0;
+            padding-left: 0;
+            text-align: center;
+        }
+    }
+
+    .navbar-toggler-icon{
+        z-index: 4;
+    }
+}

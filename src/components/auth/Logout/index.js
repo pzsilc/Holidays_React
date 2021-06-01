@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { logout } from '../../../requests';
 
-const Logout = () => {
+const Logout = props => {
 
     useEffect(() => {
         logout();

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { getUser } from './../../../requests';
+import { withRouter } from 'react-router';
+import './style.scss';
 
 const Header = () => {
 
@@ -7,21 +9,22 @@ const Header = () => {
 
     return(
         <header>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <a className="navbar-brand" href="#">Navbar</a>
+            <nav className="navbar navbar-expand-lg">
+                <a className="navbar-brand" href="#">URLOPY</a>
                 <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
+                    <span className="fa fa-bars"></span>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div className="navbar-nav">
                         <a className="nav-item nav-link" href="/">Home</a>
                         {user && 
                             <React.Fragment>
-                                <a className="nav-item nav-link" href="/account">Konto</a>
                                 <a className="nav-item nav-link" href="/employees/management">Twoi pracownicy</a>
                                 <a className="nav-item nav-link" href="/logout">Wyloguj się</a>
-                                |
-                                <i>{user.first_name} {user.last_name} | {user.email}</i>
+                                <div className="user">
+                                    <i className="fa fa-user mr-2"></i>
+                                    <span>{user.first_name} {user.last_name}</span>
+                                </div>
                             </React.Fragment>
                         }
                         {!user &&
@@ -34,4 +37,4 @@ const Header = () => {
     )
 }
 
-export default Header;
+export default withRouter(Header);
