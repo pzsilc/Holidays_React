@@ -37,7 +37,29 @@ const AuthRoute = ({ component: Component, ...rest }) => {
 }
 
 
+const AdminRoute = ({ component: Component, ...rest }) => {
+  var isAdmin = false;
+  let logged = getUser();
+  if(logged && logged.is_admin){
+    isAdmin = true;
+  }
+  return(
+      <Route
+          {...rest}
+          render={props =>
+            isAdmin ? (
+              <Component {...props} />
+            ) : (
+              <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
+            )
+          }
+      />
+  )
+}
+
+
 export {
     GuestRoute,
-    AuthRoute
+    AuthRoute,
+    AdminRoute
 }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getUser, getEmployees, getEmployeeHolidayRequests, putHolidayEvent } from '../../../requests';
+import { getUser, getEmployeesOfUser, getHolidaysByEmployeeId, putHolidays } from '../../../requests';
 import './style.scss';
 
 export default class EmployeesManagement extends Component{
@@ -18,9 +18,9 @@ export default class EmployeesManagement extends Component{
 
     componentDidMount = async () => {
         this.setState({ user: getUser() });
-        let emps = await getEmployees();
+        let emps = await getEmployeesOfUser();
         emps.data.forEach(async(i) => {
-            let ev = await getEmployeeHolidayRequests(parseInt(i.id));
+            let ev = await getHolidaysByEmployeeId(parseInt(i.id));
             ev.data.forEach(e => {
                 let _events = this.state.events;
                 _events.push({
@@ -38,7 +38,7 @@ export default class EmployeesManagement extends Component{
 
     onClickHandle = async (e) => {
         const { id, type } = e.target.type ? e.target.querySelector('i').dataset : e.target.dataset;
-        let res = await putHolidayEvent(id, type);
+        let res = await putHolidays(id, type);
         if(res.type === 'success'){
             let _events = this.state.events;
             for(var i=0; i<_events.length; i++){

@@ -16,21 +16,21 @@ const Login = props => {
                 <h3>Logowanie</h3>
                 <label className="mt-5">
                     Email
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend p-2">
+                    <div className="input-group mb-3">
+                        <div className="input-group-prepend p-2">
                             <i className="fa fa-user"></i>
                         </div>
-                        <input type="email" class="form-control" name="email" aria-label="Example text with button addon" aria-describedby="button-addon1"/>
+                        <input type="email" className="form-control" name="email" aria-label="Example text with button addon" aria-describedby="button-addon1"/>
                     </div>
                 </label>
                 <br/>
                 <label className="mt-3">
                     Token
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend p-2">
+                    <div className="input-group mb-3">
+                        <div className="input-group-prepend p-2">
                             <i className="fa fa-lock"></i>
                         </div>
-                        <input type="password" class="form-control" name="token" aria-label="Example text with button addon" aria-describedby="button-addon1"/>
+                        <input type="password" className="form-control" name="token" aria-label="Example text with button addon" aria-describedby="button-addon1"/>
                     </div>
                 </label>
                 <br/>
@@ -38,7 +38,7 @@ const Login = props => {
                 <br/><br/>
                 <a href="http://192.168.0.234/token-reminder" className="text-muted" target="_blank">Nie pamiętam tokenu</a>
             </form>
-            <img src="/calendar.jpg" alt="Kalendarz" id="calendar-img"/>
+            <img src="/calendar.jpg" alt="Kalendarz" id="calendar-img" className="d-none d-lg-block"/>
         </React.Fragment>
     )
 }

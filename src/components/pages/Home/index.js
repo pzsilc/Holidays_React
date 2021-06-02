@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getUser, getEmployees, postHolidaysRequest } from '../../../requests';
+import { getUser, getEmployees, postHolidays } from '../../../requests';
 import CalendarContainer from './Calendar';
 import './style.scss';
 
@@ -80,6 +80,8 @@ export default class Home extends Component{
     }
 
     resetSuggestHolidaysMode = () => {
+        document.getElementById('additionalInfo').value = "";
+        document.getElementById('changeModeInput').checked = false;
         this.setState({
             ...this.state,
             suggestHolidays: {
@@ -88,15 +90,13 @@ export default class Home extends Component{
                 to: null
             }
         });
-        document.querySelector('textarea').value = "";
-        document.getElementById('changeModeInput').checked = false;
     }
 
     submitSuggestHolidays = async(e) => {
         e.preventDefault();
         const { from, to } = this.state.suggestHolidays;
         const { additionalInfo } = e.target;
-        let res = await postHolidaysRequest(from, to, this.state.user, additionalInfo.value);
+        let res = await postHolidays(from, to, this.state.user, additionalInfo.value);
         if(res.type === 'success'){
             this.resetSuggestHolidaysMode();
         }
@@ -121,8 +121,8 @@ export default class Home extends Component{
                 />
                 <form onSubmit={this.submitSuggestHolidays} id="add-form">
                     <input type="checkbox" id="changeModeInput" onChange={this.changeMode} />
-                    <label for="changeModeInput" dangerouslySetInnerHTML={{ __html: this.state.suggestHolidays.mode ? '-' : '+' }}/>
-                    <span class="text-muted h3 ml-4">Zaproponuj urlop</span>
+                    <label htmlFor="changeModeInput" dangerouslySetInnerHTML={{ __html: this.state.suggestHolidays.mode ? '-' : '+' }}/>
+                    <span className="text-muted h3 ml-4">Zaproponuj urlop</span>
                     {this.state.suggestHolidays.mode &&
                         <div>
                             <hr/>
@@ -135,7 +135,7 @@ export default class Home extends Component{
                                 }
                                 <button onClick={this.clearMarkedHolidays} type="button" className="btn btn-danger rounded-0"><i className="fa fa-eraser"></i></button>
                             </div>
-                            <textarea className="form-control" placeholder="Dodatkowe informacje" name="additionalInfo"></textarea>
+                            <textarea className="form-control" id="additionalInfo" placeholder="Dodatkowe informacje" name="additionalInfo"></textarea>
                             <button type="submit" className="btn btn-primary" disabled={!(this.state.suggestHolidays.from && this.state.suggestHolidays.to)}>Wyślij</button>
                         </div>
                     }

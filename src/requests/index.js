@@ -4,11 +4,12 @@ const API = 'http://localhost/holidays/backend/';
 const URL = 'http://localhost:3000/'
 
 
+//pobiera zalogowanego użytkownika
 const getUser = () => {
     return JSON.parse(window.localStorage.getItem('holidaysAuth'));
 }
 
-
+//konwertuje dane do wysłania żądania
 const params = data => {
     const res = new URLSearchParams();
     for(const [key, value] of Object.entries(data)){
@@ -17,7 +18,7 @@ const params = data => {
     return res;
 }
 
-
+//logowanie
 const login = (email, token) => {
     axios.post(API + 'auth/login', params({ email, token }), {})
     .then(res => res.data)
@@ -25,17 +26,20 @@ const login = (email, token) => {
         window.localStorage.setItem('holidaysAuth', JSON.stringify(res.data));
         window.location.replace(URL);
     })
-    .catch(err => addNotification('danger', err.response.data.data));
+    .catch(err => {
+        addNotification('danger', err.response.data.data);
+        document.querySelector('input[type="password"').value = "";
+    });
 }
 
-
+//wylogowywanie
 const logout = () => {
     window.localStorage.removeItem('holidaysAuth');
     window.location.replace(URL + 'login');
 }
 
-
-const getEmployees = () => {
+//pobiera pracowników zalogowanego użytkownika
+const getEmployeesOfUser = () => {
     return new Promise(resolve => {
         const user = getUser();
         axios.post(API + 'user/employees', params({ user_id: user.id }), {})
@@ -45,7 +49,7 @@ const getEmployees = () => {
     })
 }
 
-
+//pobiera kierownika zalogowanego pracownika
 const getManager = () => {
     return new Promise(resolve => {
         const user = getUser();
@@ -56,9 +60,9 @@ const getManager = () => {
     });
 }
 
-
-const postHolidaysRequest = (from, to, user, additionalInfo) => new Promise(resolve => {
-    axios.post(API + 'holidays', params({ 
+//utworzenie nowego urlopu
+const postHolidays = (from, to, user, additionalInfo) => new Promise(resolve => {
+    axios.post(API + 'holidays/add', params({ 
         from: from.getFullYear() + '-' + ((from.getMonth() + 1) < 10 ? '0' + (from.getMonth() + 1) : from.getMonth() + 1) + '-' + (from.getDate() < 10 ? '0' + from.getDate() : from.getDate()), 
         to: to.getFullYear() + '-' + ((to.getMonth() + 1) < 10 ? '0' + (to.getMonth() + 1) : to.getMonth() + 1) + '-' + (to.getDate() < 10 ? '0' + to.getDate() : to.getDate()), 
         user_id: user.id, 
@@ -72,17 +76,17 @@ const postHolidaysRequest = (from, to, user, additionalInfo) => new Promise(reso
     .catch(err => addNotification('danger', err.response.data.data));
 })
 
-
-const getEmployeeHolidayRequests = employeeId => new Promise(resolve => {
+//pobiera urlopy po id pracownika
+const getHolidaysByEmployeeId = (employeeId, all = false) => new Promise(resolve => {
     let user = getUser();
-    axios.post(API + 'holidays/employees', params({ employee_id: employeeId, user_id: user.id }))
+    axios.post(API + 'holidays/get-by-employee-id', params({ employee_id: employeeId, user_id: user.id, all }))
     .then(res => res.data)
     .then(res => resolve(res))
     .catch(err => addNotification('danger', err.response.data.data));
 })
 
-
-const putHolidayEvent = (id, type) => new Promise(resolve => {
+//aktualizuje urlop po id
+const putHolidays = (id, type) => new Promise(resolve => {
     const user = getUser();
     axios.post(API + 'holidays/update', params({ user_id: user.id, id, type }))
     .then(res => res.data)
@@ -93,7 +97,19 @@ const putHolidayEvent = (id, type) => new Promise(resolve => {
     .catch(err => addNotification('danger', err.response.data.data));
 })
 
+//usuwa urlop
+const deleteHolidays = id => new Promise(resolve => {
+    const user = getUser();
+    axios.post(API + 'holidays/delete', params({ id, user_id: user.id }))
+    .then(res => res.data)
+    .then(res => {
+        addNotification('success', res.data);
+        resolve(res);
+    })
+    .catch(err => addNotification('danger', err.response.data.data))
+})
 
+//dodaje informacje dla użytkownika
 const addNotification = (type, text) => {
     store.addNotification({
         message: text,
@@ -106,15 +122,35 @@ const addNotification = (type, text) => {
     });
 }
 
+//pobiera statusy
+const getStatuses = () => new Promise(resolve => {
+    axios.get(API + 'statuses')
+    .then(res => res.data)
+    .then(res => resolve(res))
+    .catch(err => addNotification('danger', err.response.data.data))
+})
+
+//pobiera pracowników
+const getEmployees = (id = null) => new Promise(resolve => {
+    const user = getUser();
+    axios.post(API + 'employees', params({ user_id: user.id, employee_id: id }))
+    .then(res => res.data)
+    .then(res => resolve(res))
+    .catch(err => addNotification('danger', err.response.data.data))
+});
+
 
 export{
     login,
     logout,
     getUser,
-    getEmployees,
+    getEmployeesOfUser,
     getManager,
-    postHolidaysRequest,
-    getEmployeeHolidayRequests,
-    putHolidayEvent,
-    addNotification
+    postHolidays,
+    getHolidaysByEmployeeId,
+    putHolidays,
+    deleteHolidays,
+    addNotification,
+    getStatuses,
+    getEmployees
 }

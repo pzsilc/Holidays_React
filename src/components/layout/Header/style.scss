@@ -3,6 +3,8 @@
 header{
     position: fixed;
     width: 100%;
+    z-index: 1000;
+    opacity: 0.9;
 }
 
 .navbar{

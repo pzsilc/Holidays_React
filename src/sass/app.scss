@@ -7,7 +7,7 @@ html, body{
 }
 
 main{
-    padding-top: 100px;
+    padding-top: 200px;
     min-height: 800px;
 }
 
@@ -20,5 +20,9 @@ main{
         background: $color2 !important;
         border: $color2 !important;
     }
+}
+
+.fa{
+    pointer-events: none;
 }
 

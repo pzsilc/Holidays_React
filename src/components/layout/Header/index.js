@@ -20,11 +20,14 @@ const Header = () => {
                         {user && 
                             <React.Fragment>
                                 <a className="nav-item nav-link" href="/employees/management">Twoi pracownicy</a>
+                                {user.is_admin &&
+                                    <a className="nav-item nav-link" href="/dashboard">Panel administratora</a>
+                                }
                                 <a className="nav-item nav-link" href="/logout">Wyloguj się</a>
-                                <div className="user">
+                                <a href="/account" className="user">
                                     <i className="fa fa-user mr-2"></i>
                                     <span>{user.first_name} {user.last_name}</span>
-                                </div>
+                                </a>
                             </React.Fragment>
                         }
                         {!user &&
