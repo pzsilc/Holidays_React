@@ -96,7 +96,7 @@ export default class Home extends Component{
         e.preventDefault();
         const { from, to } = this.state.suggestHolidays;
         const { additionalInfo } = e.target;
-        let res = await postHolidays(from, to, this.state.user, additionalInfo.value);
+        let res = await postHolidays(from, to, this.state.user, additionalInfo.value, 1);
         if(res.type === 'success'){
             this.resetSuggestHolidaysMode();
         }

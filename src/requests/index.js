@@ -61,12 +61,13 @@ const getManager = () => {
 }
 
 //utworzenie nowego urlopu
-const postHolidays = (from, to, user, additionalInfo) => new Promise(resolve => {
+const postHolidays = (from, to, user, additionalInfo, kindId) => new Promise(resolve => {
     axios.post(API + 'holidays/add', params({ 
         from: from.getFullYear() + '-' + ((from.getMonth() + 1) < 10 ? '0' + (from.getMonth() + 1) : from.getMonth() + 1) + '-' + (from.getDate() < 10 ? '0' + from.getDate() : from.getDate()), 
         to: to.getFullYear() + '-' + ((to.getMonth() + 1) < 10 ? '0' + (to.getMonth() + 1) : to.getMonth() + 1) + '-' + (to.getDate() < 10 ? '0' + to.getDate() : to.getDate()), 
         user_id: user.id, 
-        additionalInfo
+        additionalInfo,
+        kindId
     }))
     .then(res => res.data)
     .then(res => {
