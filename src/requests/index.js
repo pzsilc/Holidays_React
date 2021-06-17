@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { store } from 'react-notifications-component';
 const API = 'http://localhost/holidays/backend/';
-const URL = 'http://localhost:3000/'
+const URL = 'http://localhost:3000/holidays/'
 
 
 //pobiera zalogowanego użytkownika
@@ -71,6 +71,7 @@ const postHolidays = (from, to, user, additionalInfo, kindId) => new Promise(res
     }))
     .then(res => res.data)
     .then(res => {
+        console.log(res)
         addNotification('success', res.data);
         resolve(res);
     })
@@ -132,13 +133,37 @@ const getStatuses = () => new Promise(resolve => {
 })
 
 //pobiera pracowników
-const getEmployees = (id = null) => new Promise(resolve => {
+const getEmployees = (id = null, keywords = '') => new Promise(resolve => {
     const user = getUser();
-    axios.post(API + 'employees', params({ user_id: user.id, employee_id: id }))
+    axios.post(API + 'employees', params({ user_id: user.id, employee_id: id, keywords }))
     .then(res => res.data)
     .then(res => resolve(res))
-    .catch(err => addNotification('danger', err.response.data.data))
+    .catch(() => resolve(false));
 });
+
+//pobieranie powiadomień
+const getNotifications = () => new Promise(resolve => {
+    const user = getUser();
+    axios.post(API + 'notifications', params({ user_id: user.id }))
+    .then(res => res.data)
+    .then(res => resolve(res))
+    .catch(err => {
+        addNotification('danger', err.response.data.data);
+        resolve(false);
+    });
+})
+
+//'przeczytanie powiadomienia'
+const putNotification = notificationId => new Promise(resolve => {
+    const user = getUser();
+    axios.post(API + 'notifications/update', params({ notification_id: notificationId, user_id: user.id }))
+    .then(res => res.data)
+    .then(res => resolve(res))
+    .catch(err => {
+        addNotification('danger', err.response.data.data);
+        resolve(false);
+    });
+})
 
 
 export{
@@ -153,5 +178,9 @@ export{
     deleteHolidays,
     addNotification,
     getStatuses,
-    getEmployees
+    getEmployees,
+    getNotifications,
+    putNotification
 }
+
+

@@ -125,6 +125,7 @@ export default class Home extends Component{
                     <span className="text-muted h3 ml-4">Zaproponuj urlop</span>
                     {this.state.suggestHolidays.mode &&
                         <div>
+                            <span className="text-muted">Zaznacz daty urlopu (od dnia - do dnia), jeśli stwierdzisz że chcesz zedytować daty po zaznaczeniu, użyj przycisku gumki poniżej i zaznacz jeszcze raz</span>
                             <hr/>
                             <b>Od:</b>{fromDate}
                             <br/>
@@ -135,7 +136,7 @@ export default class Home extends Component{
                                 }
                                 <button onClick={this.clearMarkedHolidays} type="button" className="btn btn-danger rounded-0"><i className="fa fa-eraser"></i></button>
                             </div>
-                            <textarea className="form-control" id="additionalInfo" placeholder="Dodatkowe informacje" name="additionalInfo"></textarea>
+                            <textarea className="form-control" id="additionalInfo" placeholder="Dodatkowe informacje (opcjonalne)" name="additionalInfo"></textarea>
                             <button type="submit" className="btn btn-primary" disabled={!(this.state.suggestHolidays.from && this.state.suggestHolidays.to)}>Wyślij</button>
                         </div>
                     }

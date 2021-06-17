@@ -3,7 +3,7 @@ import { BrowserRouter, Switch } from "react-router-dom";
 import { AuthRoute, GuestRoute, AdminRoute } from './middlewares/index';
 import { Header, Footer } from './components/layout';
 import { Login, Logout } from './components/auth';
-import { Home, EmployeesManagement, Account } from './components/pages';
+import { Home, EmployeesRequests, Account, Notifications } from './components/pages';
 import { Home as DashboardHome, OneEmployee } from './components/dashboard';
 import ReactNotification from 'react-notifications-component'
 import 'react-notifications-component/dist/theme.css'
@@ -17,13 +17,14 @@ const App = () => {
             <ReactNotification />
             <main>
                 <Switch>
-                    <AuthRoute exact path="/" component={Home} />
-                    <GuestRoute path="/login" component={Login} />
-                    <AuthRoute path="/employees/management" component={EmployeesManagement} />
-                    <AuthRoute path="/logout" component={Logout} />
-                    <AuthRoute path="/account" component={Account}/>
-                    <AdminRoute path='/dashboard/employees/:id' component={OneEmployee}/>
-                    <AdminRoute path='/dashboard' component={DashboardHome}/>
+                    <AuthRoute exact path="/holidays/" component={Home} />
+                    <GuestRoute path="/holidays/login" component={Login} />
+                    <AuthRoute path="/holidays/employees/requests" component={EmployeesRequests} />
+                    <AuthRoute path="/holidays/logout" component={Logout} />
+                    <AuthRoute path="/holidays/account" component={Account}/>
+                    <AuthRoute path='/holidays/notifications' component={Notifications}/>
+                    <AdminRoute path='/holidays/dashboard/employees/:id' component={OneEmployee}/>
+                    <AdminRoute path='/holidays/dashboard' component={DashboardHome}/>
                 </Switch>
             </main>
             <Footer/>

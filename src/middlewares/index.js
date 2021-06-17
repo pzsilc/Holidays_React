@@ -10,7 +10,7 @@ const GuestRoute = ({ component: Component, ...rest }) => {
             {...rest}
             render={props =>
               isLogged ? (
-                <Redirect to={{ pathname: '/', state: { from: props.location } }} />
+                <Redirect to={{ pathname: '/holidays/', state: { from: props.location } }} />
               ) : (
                 <Component {...props} />
               )
@@ -29,7 +29,7 @@ const AuthRoute = ({ component: Component, ...rest }) => {
               isLogged ? (
                 <Component {...props} />
               ) : (
-                <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
+                <Redirect to={{ pathname: '/holidays/login', state: { from: props.location } }} />
               )
             }
         />

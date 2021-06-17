@@ -42,7 +42,7 @@ const OneEmployee = props => {
             }
             {!loading &&
                 <div className="container">
-                    <a href="/dashboard"><i className="fa fa-arrow-left h2 text-muted"></i></a>
+                    <a href="/holidays/dashboard"><i className="fa fa-arrow-left h2 text-muted"></i></a>
                     <div className="row mt-5">
                         <div className="col-12 col-md-6">
                             <h2 className="mb-5">Profil pracownika</h2>

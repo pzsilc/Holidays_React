@@ -1,9 +1,11 @@
 import Home from './Home';
-import EmployeesManagement from './EmployeesManagement';
+import EmployeesRequests from './EmployeesRequests';
 import Account from './Account';
+import Notifications from './Notifications';
 
 export{
     Home,
-    EmployeesManagement,
-    Account
+    EmployeesRequests,
+    Account,
+    Notifications
 }
