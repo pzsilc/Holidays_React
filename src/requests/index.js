@@ -165,6 +165,28 @@ const putNotification = notificationId => new Promise(resolve => {
     });
 })
 
+//pobiera typy urlopów
+const getHolidaysKinds = () => new Promise(resolve => {
+    axios.get(API + 'kinds')
+    .then(res => res.data)
+    .then(res => resolve(res.data))
+    .catch(err => {
+        console.log(err);
+        resolve([])
+    })
+})
+
+//generuje pdfa z wnioskiem
+const getPDF = id => new Promise(resolve => {
+    axios.post(API + 'pdf', params({ id }))
+    .then(res => res)
+    .then(res => resolve(res.data))
+    .catch(err => {
+        addNotification('error', 'Nie udało się wczytać wniosku');
+        resolve(false);
+    })
+})
+
 
 export{
     login,
@@ -180,7 +202,9 @@ export{
     getStatuses,
     getEmployees,
     getNotifications,
-    putNotification
+    putNotification,
+    getHolidaysKinds,
+    getPDF
 }
 
 

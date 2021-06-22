@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { unstable_renderSubtreeIntoContainer } from 'react-dom';
-import { getEmployees, getHolidaysByEmployeeId, getStatuses } from '../../../requests';
+import { getEmployees, getHolidaysByEmployeeId, getStatuses, deleteHolidays } from '../../../requests';
 import AddSicknessForm from './AddSicknessForm';
+import PDF from './PDF';
+import './style.scss';
+const URL = 'http://localhost/holidays';
 
 const OneEmployee = props => {
 
@@ -34,6 +36,12 @@ const OneEmployee = props => {
         setLoading(false);
     }
 
+    const _delete = async(e) => {
+        const {id} = e.target.dataset;
+        await deleteHolidays(id);
+        update();
+    }
+
     return(
         <div className="p-5">
             {loading && <div className="text-center">
@@ -53,7 +61,7 @@ const OneEmployee = props => {
                         <div className="col-12 col-md-6 border-left">
                             <h3 className="mb-3">Urlopy</h3>
                             {events.map((e, key) => 
-                                <div key={key} className={`border p-3 d-flex justify-content-between ${getColor(e)}`}>
+                                <div key={key} className={`holiday border p-3 d-flex justify-content-between ${getColor(e)}`}>
                                     <div>
                                         <i className="fa fa-calendar mr-2"></i>
                                         {e.from_date}
@@ -63,6 +71,10 @@ const OneEmployee = props => {
                                     </div>
                                     <div>
                                         {(e.kind.id == 1 ? e.status.name : "")}
+                                    </div>
+                                    <div>
+                                        {e.kind_id == 2 && <button className="del-icon btn btn-danger mr-1" data-id={e.id} onClick={_delete}><i className="fa fa-trash"></i></button>}
+                                        {e.kind_id != 2 && <PDF event={e} />}
                                     </div>
                                 </div>
                             )}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getHolidaysByEmployeeId, deleteHolidays, getStatuses, getUser, getEmployeesOfUser } from '../../../requests';
+import { getHolidaysByEmployeeId, deleteHolidays, getStatuses, getUser, getEmployeesOfUser, getPDF } from '../../../requests';
 import { Link } from 'react-router-dom';
 
 export default class Account extends Component{
@@ -35,6 +35,21 @@ export default class Account extends Component{
             }
             this.setState({ events: ev })
         }
+    }
+
+    print = e => {
+        const { event_id } = e.target.dataset;
+        getPDF(event_id)
+        .then(res => {
+            if(res){
+                const linkSource = `data:application/pdf;base64,${res.data}`;
+                const downloadLink = document.createElement("a");
+                const fileName = "wniosek.pdf";
+                downloadLink.href = linkSource;
+                downloadLink.download = fileName;
+                downloadLink.click();
+            }
+        })
     }
 
     render = () => {
@@ -87,6 +102,11 @@ export default class Account extends Component{
                                             </button>
                                         }
                                     </div>
+                                }
+                                {event.kind_id != 2 &&
+                                    <button className="btn btn-info" onClick={this.print} data-event_id={event.id}>
+                                        <i className="fa fa-print"></i>
+                                    </button>
                                 }
                             </li>
                         )}

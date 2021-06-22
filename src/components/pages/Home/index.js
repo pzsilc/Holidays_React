@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getUser, getEmployees, postHolidays } from '../../../requests';
+import { getUser, getEmployees, postHolidays, getHolidaysKinds } from '../../../requests';
 import CalendarContainer from './Calendar';
 import './style.scss';
 
@@ -9,10 +9,12 @@ export default class Home extends Component{
     state = {
         user: null,
         employees: [],
+        kinds: [],
         suggestHolidays: {
             mode: false,
             from: null,
-            to: null
+            to: null,
+            kindId: null
         }
     }
 
@@ -20,12 +22,12 @@ export default class Home extends Component{
         const user = getUser();
         this.setState({ user });
         this.fetchEmployees();
+        this.fetchKinds();
     }
 
-    fetchEmployees = async () => {
-        const employees = await getEmployees();
-        this.setState({ employees });
-    }
+    fetchEmployees = async () => this.setState({ employees: await getEmployees() });
+
+    fetchKinds = async() => this.setState({ kinds: (await getHolidaysKinds()).filter(i => i.name !== 'chorobowe') });
 
     getDaysArray = (start, end) => {
         for(var arr=[],dt=new Date(start); dt<=end; dt.setDate(dt.getDate()+1)){
@@ -55,6 +57,14 @@ export default class Home extends Component{
                 to: null
             }
         });
+    }
+
+    onClick = e => {
+        const { name, value } = e.target;
+        this.setState({ ...this.state, suggestHolidays: {
+            ...this.state.suggestHolidays,
+            [name]: value
+        }});
     }
 
     pickDate = e => {
@@ -87,16 +97,18 @@ export default class Home extends Component{
             suggestHolidays: {
                 mode: false,
                 from: null,
-                to: null
+                to: null,
+                kindId: null
             }
         });
     }
 
     submitSuggestHolidays = async(e) => {
         e.preventDefault();
-        const { from, to } = this.state.suggestHolidays;
-        const { additionalInfo } = e.target;
-        let res = await postHolidays(from, to, this.state.user, additionalInfo.value, 1);
+        const { from, to, kindId } = this.state.suggestHolidays;
+        var { additionalInfo, purpose } = e.target;
+        additionalInfo =  purpose ? 'Powód: <b>' + purpose.value + '</b><br/>' + additionalInfo.value : additionalInfo.value;
+        let res = await postHolidays(from, to, this.state.user, additionalInfo, kindId);
         if(res.type === 'success'){
             this.resetSuggestHolidaysMode();
         }
@@ -113,6 +125,13 @@ export default class Home extends Component{
             datesToMark = days;
         }
         const daysNum = datesToMark.length;
+        const getIdOfKind = () => {
+            const { kinds } = this.state;
+            const { kindId } = this.state.suggestHolidays;
+            const r = kinds.filter(i => i.id == kindId);
+            return r.length ? r[0].id : null;
+        }
+
         return (
             <div>
                 <CalendarContainer 
@@ -136,6 +155,17 @@ export default class Home extends Component{
                                 }
                                 <button onClick={this.clearMarkedHolidays} type="button" className="btn btn-danger rounded-0"><i className="fa fa-eraser"></i></button>
                             </div>
+                            <label htmlFor="kindInput" className="text-dark mt-2" style={{ fontSize: '15px', background: 'transparent', width: '120px' }}>Typ urlopu</label>
+                            <select name="kindId" onClick={this.onClick} id="kindInput" className="form-control mb-2">
+                                {this.state.kinds.map((kind, key) => 
+                                    <option key={key} value={kind.id}>{kind.name}</option>
+                                )}
+                            </select>
+                            {getIdOfKind() == 6 && <input type="text" placeholder="Podaj powód" className="form-control mb-2" name="purpose" required/>}
+                            {getIdOfKind() == 7 && <select name="option_nb" className="form-control mb-2" required>
+                                <option value="1">2 dni</option>
+                                <option value="2">16 godzin</option>
+                            </select>}
                             <textarea className="form-control" id="additionalInfo" placeholder="Dodatkowe informacje (opcjonalne)" name="additionalInfo"></textarea>
                             <button type="submit" className="btn btn-primary" disabled={!(this.state.suggestHolidays.from && this.state.suggestHolidays.to)}>Wyślij</button>
                         </div>
