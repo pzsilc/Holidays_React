@@ -61,13 +61,21 @@ const getManager = () => {
 }
 
 //utworzenie nowego urlopu
-const postHolidays = (from, to, user, additionalInfo, kindId) => new Promise(resolve => {
+const postHolidays = (from, to, user, additionalInfo, kindId, placeholder='[]') => new Promise(resolve => {
+    console.log(from, to, user, additionalInfo, kindId, placeholder);
+    if(from !== '0000-00-00'){
+        from = from.getFullYear() + '-' + ((from.getMonth() + 1) < 10 ? '0' + (from.getMonth() + 1) : from.getMonth() + 1) + '-' + (from.getDate() < 10 ? '0' + from.getDate() : from.getDate());
+    }
+    if(to !== '0000-00-00'){
+        to = to.getFullYear() + '-' + ((to.getMonth() + 1) < 10 ? '0' + (to.getMonth() + 1) : to.getMonth() + 1) + '-' + (to.getDate() < 10 ? '0' + to.getDate() : to.getDate());
+    }
     axios.post(API + 'holidays/add', params({ 
-        from: from.getFullYear() + '-' + ((from.getMonth() + 1) < 10 ? '0' + (from.getMonth() + 1) : from.getMonth() + 1) + '-' + (from.getDate() < 10 ? '0' + from.getDate() : from.getDate()), 
-        to: to.getFullYear() + '-' + ((to.getMonth() + 1) < 10 ? '0' + (to.getMonth() + 1) : to.getMonth() + 1) + '-' + (to.getDate() < 10 ? '0' + to.getDate() : to.getDate()), 
+        from, 
+        to, 
         user_id: user.id, 
         additionalInfo,
-        kindId
+        kindId,
+        placeholder
     }))
     .then(res => res.data)
     .then(res => {
@@ -180,7 +188,7 @@ const getHolidaysKinds = () => new Promise(resolve => {
 const getPDF = id => new Promise(resolve => {
     axios.post(API + 'pdf', params({ id }))
     .then(res => res)
-    .then(res => resolve(res.data))
+    .then(res => {console.log(res.data);resolve(res.data)})
     .catch(err => {
         addNotification('error', 'Nie udało się wczytać wniosku');
         resolve(false);

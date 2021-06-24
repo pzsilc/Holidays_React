@@ -7,6 +7,7 @@ const CalendarContainer = props => {
     var value = new Date();
     return(
         <div className="text-center">
+            <h1 className="mb-5">Kalendarz urlopowy</h1>
             <Calendar
                 defaultValue={value}
                 onClickDay={props.pickDate}
