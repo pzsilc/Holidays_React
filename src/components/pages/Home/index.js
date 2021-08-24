@@ -215,6 +215,19 @@ export default class Home extends Component{
                     pickDate={this.pickDate}
                     datesToMark={datesToMark}
                 />
+                <div className="py-3 text-center">
+                    <span className="text-muted">
+                        Jak dodać urlop?<br/>
+                        <small>
+                            Aby dodać urlop wystarczy kliknąć poniższy przycisk "Zaproponuj urlop".<br/>
+                            Następnie należy zaznaczyć datę początku, a po niej datę końca urlopu.<br/>
+                            Jeśli chcesz poprawić daty należy kliknąć przycisk gumki (czerwony przycisk poniżej).<br/>
+                            Jeśli chcesz zmienić miesiąc, kliknij na nagłówek kalendarza (nazwa miesiąca i rok)<br/>
+                            Spowoduje on reset formularza.<br/>
+                            Na koniec należy zaznaczyć powód i wysłać formularz
+                        </small>
+                    </span>
+                </div>
                 <form 
                     onSubmit={this.submitSuggestHolidays} 
                     id="add-form"
@@ -235,11 +248,6 @@ export default class Home extends Component{
                     </span>
                     {this.state.suggestHolidays.mode &&
                         <div>
-                            <span 
-                                className="text-muted"
-                            >
-                                Zaznacz daty urlopu (od dnia - do dnia), jeśli stwierdzisz że chcesz zedytować daty po zaznaczeniu, użyj przycisku gumki poniżej i zaznacz jeszcze raz
-                            </span>
                             <hr/>
                             <b>Od:</b>{fromDate}
                             <br/>

@@ -1,12 +1,13 @@
 import axios from 'axios';
 import { store } from 'react-notifications-component';
-const API = 'http://localhost/holidays/backend/';
-const URL = 'http://localhost:3000/holidays/'
+const API = 'http://192.168.0.234/holidays/backend/';
+const URL = 'http://192.168.0.234/holidays/'
 
 
 //pobiera zalogowanego użytkownika
 const getUser = () => {
-    return JSON.parse(window.localStorage.getItem('holidaysAuth'));
+    let user = window.localStorage.getItem('holidaysAuth');
+    return (user && user != 'undefined') ? JSON.parse(user) : null;
 }
 
 //konwertuje dane do wysłania żądania
@@ -23,8 +24,13 @@ const login = (email, token) => {
     axios.post(API + 'auth/login', params({ email, token }), {})
     .then(res => res.data)
     .then(res => {
-        window.localStorage.setItem('holidaysAuth', JSON.stringify(res.data));
-        window.location.replace(URL);
+        console.log(res)
+        if(res.data){
+            window.localStorage.setItem('holidaysAuth', JSON.stringify(res.data));
+            window.location.replace(URL);
+        } else {
+            addNotification('danger', 'Coś poszło nie tak');
+        }
     })
     .catch(err => {
         addNotification('danger', err.response.data.data);
@@ -44,7 +50,10 @@ const getEmployeesOfUser = () => {
         const user = getUser();
         axios.post(API + 'user/employees', params({ user_id: user.id }), {})
         .then(res => res.data)
-        .then(res => resolve(res))
+        .then(res => {
+            console.log(res);
+            resolve(res);
+        })
         .catch(err => addNotification('danger', err.response.data.data));
     })
 }
@@ -101,6 +110,7 @@ const putHolidays = (id, type) => new Promise(resolve => {
     axios.post(API + 'holidays/update', params({ user_id: user.id, id, type }))
     .then(res => res.data)
     .then(res => {
+        console.log(res)
         addNotification('success', res.data);
         resolve(res)
     })
@@ -116,7 +126,9 @@ const deleteHolidays = id => new Promise(resolve => {
         addNotification('success', res.data);
         resolve(res);
     })
-    .catch(err => addNotification('danger', err.response.data.data))
+    .catch(err => {
+        addNotification('danger', err.response.data.data)
+    })
 })
 
 //dodaje informacje dla użytkownika
@@ -187,12 +199,30 @@ const getHolidaysKinds = () => new Promise(resolve => {
 //generuje pdfa z wnioskiem
 const getPDF = id => new Promise(resolve => {
     axios.post(API + 'pdf', params({ id }))
-    .then(res => res)
-    .then(res => {console.log(res.data);resolve(res.data)})
+    .then(res => resolve(res.data))
     .catch(err => {
         addNotification('error', 'Nie udało się wczytać wniosku');
         resolve(false);
     })
+})
+
+
+const setDeputy = deputyId => new Promise((resolve, reject) => {
+    let user = getUser()
+    axios.post(API + 'user/set-deputy', params({ user_id: user.id, deputy_id: deputyId }))
+    .then(res => {
+        console.log(res);
+        resolve(res.data)
+    })
+    .catch(reject);
+})
+
+
+const getDeputy = () => new Promise((resolve, reject) => {
+    let user = getUser()
+    axios.post(API + 'user/deputy', params({ user_id: user.id }))
+    .then(res => resolve(res.data.data))
+    .catch(reject);
 })
 
 
@@ -212,7 +242,9 @@ export{
     getNotifications,
     putNotification,
     getHolidaysKinds,
-    getPDF
+    getPDF,
+    setDeputy,
+    getDeputy
 }
 
 

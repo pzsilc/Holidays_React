@@ -38,7 +38,7 @@ const Login = props => {
                 <br/><br/>
                 <a href="http://192.168.0.234/token-reminder" className="text-muted" target="_blank">Nie pamiętam tokenu</a>
             </form>
-            <img src="/calendar.jpg" alt="Kalendarz" id="calendar-img" className="d-none d-lg-block"/>
+            <img src="/holidays/calendar.jpg" alt="Kalendarz" id="calendar-img" className="d-none d-lg-block"/>
         </React.Fragment>
     )
 }

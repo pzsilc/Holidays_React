@@ -34,7 +34,7 @@ const HolidaysList = ({ title, events, options={} }) => {
                             <span>{e.from_date}<i className="mx-2 fa fa-arrow-right"></i>{e.to_date}</span>
                         </p>
                         <div>
-                            {e.kind.id != 2 &&
+                            {(e.kind.id != 2 && e.status.id == 2) &&
                                 <button 
                                     className="btn btn-info rounded-0 mr-1" 
                                     data-event_id={e.id} 
@@ -94,7 +94,7 @@ const HolidaysList = ({ title, events, options={} }) => {
                     }
                     <small>Rodzaj: <b>{e.full_kind_name}</b></small>
                     <br/>
-                    {e.kind.id != 2 &&
+                    {e.kind_id != 2 &&
                         <small>Status: <b>{e.status.name}</b></small>
                     }
                     <br/>
